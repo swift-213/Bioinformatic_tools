@@ -1,5 +1,5 @@
 # Bioinformatic_tools
-A collection of scripts that can be used for bioinformatic analysis
+A collection of scripts that can be used for bioinformatic analysis. All written using python3
 
 ## Cloning the repository and downloading requirements
 ```
@@ -15,7 +15,7 @@ The input list can be in the form of a text file or an excel file. If you are in
 
 ### Command line:
 ```
-python Fasta_Parser.py -fa -input -output -xlsx -txt -col_name -fa_parse -suffix
+python3 Fasta_Parser.py -fa -input -output -xlsx -txt -col_name -fa_parse -suffix
 ```
 ### Flags:
 | Flag | Long Flag | Description | Required |
