@@ -72,7 +72,7 @@ if args.add_suffix == True:
 #Parsing the fasta file to be only the variants from the variant list if the variant name needs to be parsed
 if args.Fasta_parse_variant_name == True:
     fasta_dict={}
-    for line in positions:
+    for line in tqdm(positions):
         for key, value in seq_dict.items():
             one, two, three = key.split('|')
             if two == line:
@@ -81,7 +81,7 @@ if args.Fasta_parse_variant_name == True:
 #Parsing the fasta file to be only the variants from the variant list if the variant name doesn't to be parsed
 if args.Fasta_parse_variant_name == False:
     fasta_dict={}
-    for line in positions:
+    for line in tqdm(positions):
         for key, value in seq_dict.items():
             one, two = key.split(' ', 1)
             print(one)
