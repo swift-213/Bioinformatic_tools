@@ -12,7 +12,7 @@ parser.add_argument("-xlsx", "--excel_input", help="flag required if your input 
 parser.add_argument("-fa_parse", "--Fasta_parse_variant_name", help="if the name of the variant needs parsed. e.g. ENA|NAME|LONGER_NAME. The script assumes your variant name will match the NAME part.", required=False)
 parser.add_argument("-txt", "--text_file_input", help="flag required if your input is in excel format", required=False)
 parser.add_argument("-col_name", "--column_name", help="if excel input is part of a larger table the name of the column that has the variant names", required=False)
-parser.add_argument("-suffix", "--add_suffix", help="if the fasta has a suffix e.g. .1 that your gene list does not it can be added with this flag follwed by the suffix in ''", required=False)
+parser.add_argument("-suffix", "--add_suffix", help="if the fasta variant name has a suffix e.g. .1 that your gene list does not it can be added with this flag follwed by the suffix in ''", required=False)
 
 args = parser.parse_args()
 
@@ -38,8 +38,6 @@ def write_fasta(seqs, fasta_file, wrap=80):
 
 
 seq_dict = {rec.description : rec.seq for rec in SeqIO.parse(args.full_fasta_file, "fasta")}
-seq_dict = {rec.description : rec.seq for rec in SeqIO.parse('/Users/frankieswift/Desktop/uniprot-download_true_format_fasta_query__28_28proteome_3AUP00000897-2022.08.26-09.54.41.61.fasta', "fasta")}
-seq_dict = {rec.description : rec.seq for rec in SeqIO.parse("/Users/frankieswift/Downloads/Podabrus_alpinus-GCA_932274525.1-2022_08-cds.fa", "fasta")}
 
 #loading variable files from an excel file
 if args.excel_input == True:
@@ -50,13 +48,12 @@ if args.excel_input == True:
 #loading variable names from  a text file 
 if args.text_file_input == True:
     gene_file_list = (args.input_list)
-    gene_file_list = ('/Users/frankieswift/Desktop/gene_list.txt')
     positions=[]
     with open(gene_file_list)as f:
         for line in f:
             positions.append(line.strip())
 
-
+#if your gene list requires a suffix that is present in the fasta file it can be added here.
 if args.add_suffix == True:
     append_str1 = '.'
     append_str2 = str(args.add_suffix)
@@ -70,9 +67,9 @@ if args.add_suffix == True:
     for sub in int_table2:
         variable = str(sub)
         positions.append(variable + append_str2)
-        
-#Need to finish editing this so that we can have with and without parsing and also need to add in a bit about editing the variant names so that they have the same suffix as the inout variant
-#Create a fasta dictionary that contains the sequence name that matches the input file 
+
+
+#Parsing the fasta file to be only the variants from the variant list if the variant name needs to be parsed
 if args.Fasta_parse_variant_name == True:
     fasta_dict={}
     for line in positions:
@@ -81,7 +78,7 @@ if args.Fasta_parse_variant_name == True:
             if two == line:
                 fasta_dict[key] = value
 
-
+#Parsing the fasta file to be only the variants from the variant list if the variant name doesn't to be parsed
 if args.Fasta_parse_variant_name == False:
     fasta_dict={}
     for line in positions:
