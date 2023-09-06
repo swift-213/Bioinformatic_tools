@@ -9,8 +9,10 @@ parser.add_argument("-fa", "--full_fasta_file", help="fasta file containing tota
 parser.add_argument("-input", "--input_list", help="list of variant names to be pulled out", required=True)
 parser.add_argument("-output", "--output_location", help="file name of output file", required=True)
 parser.add_argument("-xlsx", "--excel_input", help="flag required if your input is in excel format", required=False)
+parser.add_argument("-fa_parse", "--Fasta_parse_variant_name", help="if the name of the variant needs parsed. e.g. ENA|NAME|LONGER_NAME. The script assumes your variant name will match the NAME part.", required=False)
 parser.add_argument("-txt", "--text_file_input", help="flag required if your input is in excel format", required=False)
 parser.add_argument("-col_name", "--column_name", help="if excel input is part of a larger table the name of the column that has the variant names", required=False)
+parser.add_argument("-suffix", "--add_suffix", help="if the fasta has a suffix e.g. .1 that your gene list does not it can be added with this flag follwed by the suffix in ''", required=False)
 
 args = parser.parse_args()
 
@@ -37,6 +39,7 @@ def write_fasta(seqs, fasta_file, wrap=80):
 
 seq_dict = {rec.description : rec.seq for rec in SeqIO.parse(args.full_fasta_file, "fasta")}
 seq_dict = {rec.description : rec.seq for rec in SeqIO.parse('/Users/frankieswift/Desktop/uniprot-download_true_format_fasta_query__28_28proteome_3AUP00000897-2022.08.26-09.54.41.61.fasta', "fasta")}
+seq_dict = {rec.description : rec.seq for rec in SeqIO.parse("/Users/frankieswift/Downloads/Podabrus_alpinus-GCA_932274525.1-2022_08-cds.fa", "fasta")}
 
 #loading variable files from an excel file
 if args.excel_input == True:
@@ -53,34 +56,43 @@ if args.text_file_input == True:
         for line in f:
             positions.append(line.strip())
 
-#creating a list of variable names 
-gene_names=[]
-for row in positions:
-    gene_names.append(row)
 
+if args.add_suffix == True:
+    append_str1 = '.'
+    append_str2 = str(args.add_suffix)
+
+    int_table2=[]
+    for sub in positions:
+        variable = str(sub)
+        int_table2.append(variable + append_str1)
+    
+    positions=[]
+    for sub in int_table2:
+        variable = str(sub)
+        positions.append(variable + append_str2)
+        
+#Need to finish editing this so that we can have with and without parsing and also need to add in a bit about editing the variant names so that they have the same suffix as the inout variant
 #Create a fasta dictionary that contains the sequence name that matches the input file 
-fasta_dict={}
-for key, value in seq_dict.items():
-    one, two, three = key.split('|')
-    fasta_dict[two] = value
+if args.Fasta_parse_variant_name == True:
+    fasta_dict={}
+    for line in positions:
+        for key, value in seq_dict.items():
+            one, two, three = key.split('|')
+            if two == line:
+                fasta_dict[key] = value
 
-#Subsetting the fasta dictionary so that it contains onlt those sequences that we want to pull out 
-new_fasta_dict={}
-for line in gene_names:
-    for key, value in fasta_dict.items():
-        if key == line:
-            new_fasta_dict[key] = value
 
-#creating a version of the subsetted fasta will the full descriptive fasta description for export
-export_fasta={}
-for key in tqdm(seq_dict):
-    one, two, three = key.split('|')
-    for key1, value1 in new_fasta_dict.items():
-        if key1 == two:
-            export_fasta[key] = value1
+if args.Fasta_parse_variant_name == False:
+    fasta_dict={}
+    for line in positions:
+        for key, value in seq_dict.items():
+            one, two = key.split(' ', 1)
+            print(one)
+            if one == line:
+                fasta_dict[key] = value
 
 #Exporting the fasta dictionary as a fasta file
-write_fasta(export_fasta, args.output_location, wrap=80)
+write_fasta(fasta_dict, args.output_location, wrap=80)
 
 #Script statistics
-print("The input fasta had:", len(seq_dict),"variant sequences.", "You wanted", len(gene_names),"variant sequences", "You have", len(export_fasta),"total variant sequenced in your parsed fasta " )
+print("The input fasta had", len(seq_dict),"variant sequences.", "You wanted", len(positions),"variant sequences", "You have", len(fasta_dict),"total variant sequenced in your parsed fasta " )
