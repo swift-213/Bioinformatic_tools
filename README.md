@@ -9,7 +9,7 @@ cd Bioinformatic_tools
 
 python3 -m pip install -r Bioinformatic_tools_requirements.txt
 ```
-## Fasta_Parser.py
+## Subset_fasta.py
 This script reads in a fasta file and then pulls out the sequences of variants you have specified in a seperate input list. 
 The input list can be in the form of a text file or an excel file. If you are inputting the variants in an excel file you need to specifiy the column name with the `--column_name` flag.
 
