@@ -10,7 +10,7 @@ parser.add_argument("-input", "--input_list", help="list of variant names to be 
 parser.add_argument("-output", "--output_location", help="file name of output file", required=True)
 parser.add_argument("-xlsx", "--excel_input", help="flag required if your input is in excel format", required=False)
 parser.add_argument("-fa_parse", "--Fasta_parse_variant_name", help="if the name of the variant needs parsed. e.g. ENA|NAME|LONGER_NAME. The script assumes your variant name will match the NAME part.", required=False)
-parser.add_argument("-txt", "--text_file_input", help="flag required if your input is in excel format", required=False)
+parser.add_argument("-not_excel", "--not_excel_file_input", help="flag required if your input is in excel format", required=False)
 parser.add_argument("-col_name", "--column_name", help="if excel input is part of a larger table the name of the column that has the variant names", required=False)
 parser.add_argument("-suffix", "--add_suffix", help="if the fasta variant name has a suffix e.g. .1 that your gene list does not it can be added with this flag follwed by the suffix in ''", required=False)
 
@@ -36,8 +36,12 @@ def write_fasta(seqs, fasta_file, wrap=80):
             for i in range(0, len(gseq), wrap):
                 f.write('{}\n'.format(gseq[i:i + wrap])) 
 
+full_fasta='/Users/frankieswift/Desktop/fasta_sorting/Chol.fasta'
 
 seq_dict = {rec.description : rec.seq for rec in SeqIO.parse(args.full_fasta_file, "fasta")}
+seq_dict = {rec.description : rec.seq for rec in SeqIO.parse(full_fasta, "fasta")}
+
+imput_excel='/Users/frankieswift/Desktop/fasta_sorting/Input.csv'
 
 #loading variable files from an excel file
 if args.excel_input == True:
@@ -45,9 +49,9 @@ if args.excel_input == True:
     if args.column_name == True:
         positions= dataframe1[args.column_name]
 
-#loading variable names from  a text file 
-if args.text_file_input == True:
-    gene_file_list = (args.input_list)
+#loading variable names from a text file 
+if args.not_excel_file_input == True:
+    gene_file_list = (imput_excel)
     positions=[]
     with open(gene_file_list)as f:
         for line in f:
@@ -84,7 +88,7 @@ if args.Fasta_parse_variant_name == False:
     for line in tqdm(positions):
         for key, value in seq_dict.items():
             one, two = key.split(' ', 1)
-            print(one)
+            #print(one)
             if one == line:
                 fasta_dict[key] = value
 
