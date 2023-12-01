@@ -36,12 +36,8 @@ def write_fasta(seqs, fasta_file, wrap=80):
             for i in range(0, len(gseq), wrap):
                 f.write('{}\n'.format(gseq[i:i + wrap])) 
 
-full_fasta='/Users/frankieswift/Desktop/fasta_sorting/Chol.fasta'
 
 seq_dict = {rec.description : rec.seq for rec in SeqIO.parse(args.full_fasta_file, "fasta")}
-seq_dict = {rec.description : rec.seq for rec in SeqIO.parse(full_fasta, "fasta")}
-
-imput_excel='/Users/frankieswift/Desktop/fasta_sorting/Input.csv'
 
 #loading variable files from an excel file
 if args.excel_input == True:
@@ -51,7 +47,7 @@ if args.excel_input == True:
 
 #loading variable names from a text file 
 if args.not_excel_file_input == True:
-    gene_file_list = (imput_excel)
+    gene_file_list = (args.input_list)
     positions=[]
     with open(gene_file_list)as f:
         for line in f:
