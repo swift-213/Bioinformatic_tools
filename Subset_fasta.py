@@ -9,7 +9,7 @@ parser.add_argument("-fa", "--full_fasta_file", help="fasta file containing tota
 parser.add_argument("-input", "--input_list", help="list of variant names to be pulled out", required=True)
 parser.add_argument("-output", "--output_location", help="file name of output file", required=True)
 parser.add_argument("-xlsx", "--excel_input", help="flag required if your input is in excel format", required=False)
-parser.add_argument("-fa_parse", "--Fasta_parse_variant_name", help="if the name of the variant needs parsed. e.g. ENA|NAME|LONGER_NAME. The script assumes your variant name will match the NAME part.", required=False)
+parser.add_argument("-fa_parse", "--Fasta_parse_variant_name", help="if the name of the variant needs parsed. e.g. ENA|NAME|LONGER_NAME. The script assumes your variant name will match the NAME part.", action='store_true')
 parser.add_argument("-not_excel", "--not_excel_file_input", help="flag required if your input is in excel format", required=False)
 parser.add_argument("-col_name", "--column_name", help="if excel input is part of a larger table the name of the column that has the variant names", required=False)
 parser.add_argument("-suffix", "--add_suffix", help="if the fasta variant name has a suffix e.g. .1 that your gene list does not it can be added with this flag follwed by the suffix in ''", required=False)
@@ -70,16 +70,15 @@ if args.add_suffix == True:
 
 
 #Parsing the fasta file to be only the variants from the variant list if the variant name needs to be parsed
-if args.Fasta_parse_variant_name == True:
+if args.Fasta_parse_variant_name:
     fasta_dict={}
     for line in tqdm(positions):
         for key, value in seq_dict.items():
             one, two, three = key.split('|')
             if two == line:
                 fasta_dict[key] = value
-
-#Parsing the fasta file to be only the variants from the variant list if the variant name doesn't to be parsed
-if args.Fasta_parse_variant_name == False:
+else:
+    #Parsing the fasta file to be only the variants from the variant list if the variant name doesn't to be parsed
     fasta_dict={}
     for line in tqdm(positions):
         for key, value in seq_dict.items():
